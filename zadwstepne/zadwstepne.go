@@ -5,51 +5,51 @@ import (
 	"math/rand"
 )
 
-func runTrial(switchBoxes bool, nBoxes int) bool {
+func pojedynczaProba(zamianaPudelek bool, nPudelek int) bool {
 
-	chosenDoor := rand.Intn(nBoxes) + 1
+	wybranePudelko := rand.Intn(nPudelek) + 1
 
-	if switchBoxes {
-		revealedDoor := 3
-		if chosenDoor == 2 {
-			revealedDoor = 3
+	if zamianaPudelek {
+		odkrytePudelko := 3
+		if wybranePudelko == 2 {
+			odkrytePudelko = 3
 		} else {
-			revealedDoor = 2
+			odkrytePudelko = 2
 		}
 
-		var availableDoors []int
-		for dnum := 1; dnum <= nBoxes; dnum++ {
-			if dnum != chosenDoor && dnum != revealedDoor {
-				availableDoors = append(availableDoors, dnum)
+		var dostepnePudelka []int
+		for i := 1; i <= nPudelek; i++ {
+			if i != wybranePudelko && i != odkrytePudelko {
+				dostepnePudelka = append(dostepnePudelka, i)
 			}
 		}
 
-		chosenDoor = availableDoors[rand.Intn(len(availableDoors))]
+		wybranePudelko = dostepnePudelka[rand.Intn(len(dostepnePudelka))]
 	}
 
-	return chosenDoor == 1
+	return wybranePudelko == 1
 }
 
-func runTrials(nTrials int, switchDoors bool, nDoors int) int {
-	nWins := 0
+func generatorProb(iloscProb int, zamienPudelka bool, nPudelek int) int {
+	nWygrane := 0
 
-	for i := 0; i < nTrials; i++ {
-		if runTrial(switchDoors, nDoors) {
-			nWins++
+	for i := 0; i < iloscProb; i++ {
+		if pojedynczaProba(zamienPudelka, nPudelek) {
+			nWygrane++
 		}
 	}
 
-	return nWins
+	return nWygrane
 }
 
 func main() {
-	nDoors, nTrials := 3, 10000
-	nWinsWithoutSwitch := runTrials(nTrials, false, nDoors)
-	nWinsWithSwitch := runTrials(nTrials, true, nDoors)
+	nPudelek, nProb := 3, 10000
+	nWygraneBezZamiany := generatorProb(nProb, false, nPudelek)
+	nWygraneZZamiana := generatorProb(nProb, true, nPudelek)
 
-	fmt.Printf("Monty Hall Problem with %d doors\n", nDoors)
-	fmt.Printf("Proportion of wins without switching: %.4f\n", float64(nWinsWithoutSwitch)/float64(nTrials))
-	fmt.Printf("Proportion of wins with switching: %.4f\n", float64(nWinsWithSwitch)/float64(nTrials))
+	fmt.Printf("ilosc pudelek: %d ilosc prob: %d\n", nPudelek, nProb)
+	fmt.Printf("procent wygranych bez zamiany pudelek: %.4f \n", float64(nWygraneBezZamiany)/float64(nProb))
+	fmt.Printf("procent wygranych z zamiana pudelek: %.4f \n", float64(nWygraneZZamiana)/float64(nProb))
 }
 
 // package main
