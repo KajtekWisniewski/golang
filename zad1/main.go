@@ -1,11 +1,14 @@
 package main
 
+//Kajetan Wiśniewski
+
 import (
 	"bufio"
 	"fmt"
 	"math/big"
 	"os"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -56,6 +59,8 @@ func main() {
 			weakNumber2 = callCount[i] + 1
 		}
 	}
-
+	
 	fmt.Printf("Silna liczba dla %s to %d a Slaba liczba to %d [dla %d wywolan]\n", generatedNickname, strongNumber, weakNumber, weakNumber2)
+	time.Sleep(5 * time.Second) //to tylko po to aby przy uzywaniu pliku .exe wyswietlic wynik bez
+	//dodatkowego nieskonczonego for loopa itd
 }

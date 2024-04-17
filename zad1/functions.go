@@ -1,5 +1,7 @@
 package main
 
+//Kajetan Wiśniewski
+
 import (
 	"fmt"
 	"math/big"
