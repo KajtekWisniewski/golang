@@ -85,12 +85,11 @@ func printForest(forest [][]int) {
 }
 
 func main() {
-	//rand.Seed(time.Now().UnixNano())
 	size := 10
 	trials := 100
 	minDensity := 0.1
-	maxDensity := 0.9
-	step := 0.1
+	maxDensity := 0.91
+	step := 0.05
 	bestBurntPercentage := 100.0
 	optimalDensity := 0.0
 
@@ -100,6 +99,7 @@ func main() {
 			forest := initForest(size, density)
 			if (i == 0) {
 				printForest(forest)
+				println("__________________")
 			}
 			startX, startY := rand.Intn(size), rand.Intn(size)
 			spreadFire(forest, startX, startY)
