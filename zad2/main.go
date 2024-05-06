@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"time"
+	//"time"
 )
 
 const (
@@ -11,6 +11,8 @@ const (
 	Tree  = 1
 	Burnt = 2
 )
+
+var windDirection = [2]int{1, 1} // Southeast wind, modify as needed
 
 func initForest(size int, treeProbability float64) [][]int {
 	forest := make([][]int, size)
@@ -30,11 +32,17 @@ func spreadFire(forest [][]int, x int, y int) {
 		return
 	}
 	forest[x][y] = Burnt
-	for dx := -1; dx <= 1; dx++ {
-		for dy := -1; dy <= 1; dy++ {
-			if dx != 0 || dy != 0 {
-				spreadFire(forest, x+dx, y+dy)
-			}
+	// Apply wind influence by reordering spread directions based on wind
+	directions := [][2]int{
+		{windDirection[0], windDirection[1]}, // wind primary direction
+		{windDirection[0], 0}, {0, windDirection[1]}, // secondary influenced directions
+		{0, 1}, {1, 0}, {0, -1}, {-1, 0}, {-1, -1}, {1, 1}, {1, -1}, {-1, 1}, // remaining directions
+	}
+
+	for _, d := range directions {
+		nx, ny := x+d[0], y+d[1]
+		if nx >= 0 && ny >= 0 && nx < len(forest) && ny < len(forest) && forest[nx][ny] == Tree {
+			spreadFire(forest, nx, ny)
 		}
 	}
 }
@@ -77,19 +85,36 @@ func printForest(forest [][]int) {
 }
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	//rand.Seed(time.Now().UnixNano())
 	size := 10
-	treeProbability := 0.55
+	trials := 100
+	minDensity := 0.1
+	maxDensity := 0.9
+	step := 0.1
+	bestBurntPercentage := 100.0
+	optimalDensity := 0.0
 
-	forest := initForest(size, treeProbability)
-	printForest(forest)
-	startX, startY := rand.Intn(size), rand.Intn(size)
-	spreadFire(forest, startX, startY)
-	burntTrees := countBurntTrees(forest)
-	emptySpaces := countEmptyLots(forest)
-
-	fmt.Println("Forest after fire:")
-	printForest(forest)
-	fmt.Printf("Percentage of burnt forest: %.2f%%\n", 100*float64(burntTrees)/(float64(size*size)-float64(emptySpaces)))
-	fmt.Println(burntTrees, emptySpaces)
+	for density := minDensity; density <= maxDensity; density += step {
+		var totalBurntPercentage float64
+		for i := 0; i < trials; i++ {
+			forest := initForest(size, density)
+			if (i == 0) {
+				printForest(forest)
+			}
+			startX, startY := rand.Intn(size), rand.Intn(size)
+			spreadFire(forest, startX, startY)
+			burntTrees := countBurntTrees(forest)
+			emptySpaces := countEmptyLots(forest)
+			if (i == 0) {
+				printForest(forest)
+			}
+			totalBurntPercentage += 100 * float64(burntTrees) / (float64(size*size) - float64(emptySpaces))
+			if (totalBurntPercentage < bestBurntPercentage && totalBurntPercentage != 0) {
+				bestBurntPercentage = totalBurntPercentage
+				optimalDensity = density
+			}
+		}
+		fmt.Printf("Tree density: %.2f, Average burnt percentage: %.2f%%\n", density, totalBurntPercentage/float64(trials))
+	}
+	fmt.Printf("optimal burnt percentage is %.2f%% for density of %.2f", bestBurntPercentage, optimalDensity)
 }
