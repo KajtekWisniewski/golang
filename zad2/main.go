@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math/rand"
+	"os"
 )
 
 type Tree struct {
@@ -225,4 +227,14 @@ func main() {
 	println("______________________________")
 	printForest(forest)
 	fmt.Printf("Procent spalonego lasu z gestoscia zalesienia %.2f: %.2f%%\n", density, 100*float64(burntTrees)/(float64(size*size)-float64(emptySpaces)))
+
+	for {
+		fmt.Println("kliknij aby zakonczyc program")
+		reader := bufio.NewReader(os.Stdin)
+		input, _ := reader.ReadString('\n')
+		if len(input) > -1 {
+			println("koniec programu")
+			break
+		}
+	}
 }
