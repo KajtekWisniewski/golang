@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage{graphicx}
+
+\title{Sprawozdanie - Zad2}
+\author{Kajetan Wiśniewski}
+\date{Maj 2024}
+
+\begin{document}
+
+\maketitle
+
+\section*{Wstęp}
+Program symuluje rozprzestrzenianie się ognia przez siatkę leśną, w której każda komórka może być pusta lub zawierać drzewo. Drzewa mogą mieć różne właściwości ognioodporne, a program umożliwia porównanie dwóch modeli rozprzestrzeniania się ognia w lasach o różnej gęstości.
+
+\section*{Inicjalizacja Lasu}
+Las jest reprezentowany jako dwuwymiarowa siatka struktur \texttt{Tree}, z których każda ma właściwości:
+\begin{itemize}
+    \item \texttt{fireResistance}: Liczba całkowita wskazująca odporność drzewa na pożar z zakresu od 0 do 1.
+    \item \texttt{isTree}: Wartość logiczna określająca, czy komórka zawiera drzewo.
+\end{itemize}
+Dostępne są dwie metody inicjalizacji lasu:
+\begin{enumerate}
+    \item \texttt{initForestNoFireResistance}: Inicjuje las, w którym wszystkie drzewa mają odporność na ogień równą 0, co czyni je natychmiast podatnymi na ogień.
+    \item \texttt{initForestWithResistance}: Inicjuje las, w którym drzewa losowo mają wartość 0 (brak odporności) lub 1 (odporność do pierwszego kontaktu z ogniem) jako wartość odporności na ogień.
+\end{enumerate}
+
+\section*{Modele Rozprzestrzeniania się Ognia}
+Program implementuje dwa modele rozprzestrzeniania się ognia:
+\begin{enumerate}
+    \item \texttt{simpleSpreadFire}: Ten model rozprzestrzenia ogień na wszystkie sąsiednie drzewa bez uwzględniania ich odporności na ogień. Gdy drzewo się zapali, ogień natychmiast rozprzestrzenia się na sąsiednie drzewa.
+    \item \texttt{spreadFireWithTreeResistance}: W tym modelu drzewa o odporności ogniowej 1 nie będą początkowo rozprzestrzeniać ognia; zamiast tego ich odporność zostanie zmniejszona do 0. Drzewa o odporności 0 natychmiast zapalą się i rozprzestrzenią ogień.
+\end{enumerate}
+
+\section*{Proces Symulacji}
+\begin{itemize}
+    \item Siatka lasu jest generowana na podstawie określonej gęstości drzew.
+    \item Pożar jest inicjowany na losowym drzewie, a jego rozprzestrzenianie się jest symulowane zgodnie z wybranym modelem rozprzestrzeniania się ognia.
+    \item Proces ten jest powtarzany w określonym zakresie gęstości drzew między 0.45 a 0.95, z odstępami co 0.03, aby określić, która gęstość powoduje najmniejszą ilość spalonego obszaru, aby wyznaczyć najbardziej optymalną gęstość zalesienia z tego zakresu. 
+    \item Oczywiście generalnie im mniejsza gęstość tym lepsze wyniki, dlatego nie ma sensu rozpoczynać gęstości zalesienia od niskich wartości takich jak np. 0.1. Wyniki i tak zdecydowanie faworyzują niskie gęstości, lecz
+    można porównać różnice w spalaniu lasów o takich samych gęstościach pomiędzy dwoma modelami.
+\end{itemize}
+
+\section*{Wykonanie}
+Główna funkcja przeprowadza serię prób dla każdego przedziału gęstości drzew pomiędzy określonym minimum i maksimum:
+\begin{itemize}
+    \item Dla każdej gęstości uruchamianych jest 1000 prób w celu symulacji rozprzestrzeniania się ognia i obliczenia średniego procentu spalonego lasu.
+    \item Wyniki są gromadzone w celu określenia, które zagęszczenie drzew często powoduje najniższy średni procent spalonego lasu.
+    \item Program wykorzystuje dwa zestawy symulacji: jeden zestaw z prostym modelem rozprzestrzeniania się ognia, a drugi z modelem odporności, umożliwiając porównanie wpływu różnych strategii postępowania z ogniem na podatność lasu na pożar.
+\end{itemize}
+
+\section*{Prezentacja Wyników}
+Po zakończeniu symulacji:
+\begin{itemize}
+    \item Program drukuje, która gęstość drzew często miała najniższy procent spalania dla każdego modelu.
+    \item Wyświetlana na konsoli jest wizualna reprezentacja jednego losowo wygenerowanego lasu przed i po pożarze (prosty model spalania).
+\end{itemize}
+
+\section*{Podsumowanie wyników}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=1\linewidth]{image.png}
+    \caption{Przykładowe wyniki}
+    \label{fig:enter-label}
+\end{figure}
+
+Jak widać na obrazku, generalnie faworyzowane są niskie gęstości zalesienia, jednak w przypadku modelu spalania z dodatkowym parametrem odporności na ognia, gęstsze lasy mają większą szansę na niższy stopień spalenia niż w przypadku prostego modelu.
+Przykładowo najniższa gęstość zalesienia, 0.45 to wystąpienie 616 razy najniższego procentu spalenia dla modelu z dwoma parametrami, podczas gdy dla prostego modelu pojawia się 760 razy. Różnice te są dosyć spójne pomiędzy kolejnymi wywołaniami programu. Dla modelu z dwoma parametrami pojawiają się też wyższe gęstości jako wynik podczas gdy dla prostego się to raczej nie zdarza.
+
+\end{document}
